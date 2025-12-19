@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Statistics Club, JnU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.6s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useEffect } = React;
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            useEffect(() => { if (window.lucide) lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const App = () => {
+            const navLinks = [
+                { id: 'index.html', label: 'Home' },
+                { id: 'about.html', label: 'About', active: true },
+                { id: 'people.html', label: 'People' },
+                { id: 'events.html', label: 'Events' },
+                { id: 'gallery.html', label: 'Gallery' },
+                { id: 'resources.html', label: 'Resources' },
+            ];
+
+            return (
+                <div className="min-h-screen">
+                    <nav className="fixed w-full z-50 bg-white shadow-lg py-3">
+                        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                            <a href="index.html" className="flex items-center gap-4 group">
+                                <div className="relative w-10 h-10 flex items-center justify-center">
+                                    <img src="images/Club_Logo.png" alt="Logo" className="w-full h-full object-contain relative z-10" />
+                                    <div className="absolute inset-0 bg-blue-600 rounded-xl"></div>
+                                </div>
+                                <span className="text-xl font-black leading-none tracking-tighter text-slate-900">STATCLUB <span className="text-blue-500">JnU</span></span>
+                            </a>
+                            <div className="hidden md:flex gap-2 items-center">
+                                {navLinks.map(link => (
+                                    <a key={link.id} href={link.id} className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all ${link.active ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>{link.label}</a>
+                                ))}
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main className="animate-in py-32">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="max-w-3xl mx-auto text-center mb-16">
+                                <h2 className="text-5xl font-black mb-6 text-slate-900 tracking-tight">About the Club</h2>
+                                <p className="text-xl text-slate-500 font-medium">Department of Statistics, Jagannath University</p>
+                            </div>
+                            <div className="grid md:grid-cols-2 gap-16 items-center">
+                                <div className="space-y-8">
+                                    <div className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
+                                        <h3 className="text-2xl font-bold text-slate-900 mb-4">Our Mission</h3>
+                                        <p className="text-slate-600 leading-relaxed text-lg font-light">Dedicated to fostering an environment where students apply theoretical knowledge to solve real-world problems using data.</p>
+                                    </div>
+                                    <div className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
+                                        <h3 className="text-2xl font-bold text-slate-900 mb-4">Our Legacy</h3>
+                                        <p className="text-slate-600 leading-relaxed text-lg font-light">Established within the Department of Statistics, our club has been a hub for research and coding bootcamps since its inception.</p>
+                                    </div>
+                                </div>
+                                <div className="bg-blue-600 p-12 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
+                                    <Icon name="quote" className="w-12 h-12 mb-8 opacity-40" />
+                                    <p className="italic text-2xl font-medium leading-snug">"Statistical thinking will one day be as necessary for efficient citizenship as the ability to read and write."</p>
+                                    <p className="mt-8 font-black uppercase tracking-widest text-sm">— H.G. Wells</p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="bg-slate-900 text-slate-500 py-12 text-center text-[10px] font-black uppercase tracking-[0.4em]">
+                        <p>© 2026 Statistics Club, JnU. Dhaka-1100, Bangladesh.</p>
+                    </footer>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
