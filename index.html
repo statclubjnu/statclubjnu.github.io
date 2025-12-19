@@ -18,24 +18,8 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes drawCheck {
-            to { stroke-dashoffset: 0; }
-        }
-        @keyframes scaleIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
         .animate-in {
             animation: fadeIn 0.6s ease-out forwards;
-        }
-        .animate-check {
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            animation: drawCheck 0.8s ease-out forwards;
-            animation-delay: 0.2s;
-        }
-        .animate-scale {
-            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         /* Custom scrollbar for better look */
         ::-webkit-scrollbar { width: 8px; }
@@ -58,72 +42,13 @@
             return <i data-lucide={name} className={className}></i>;
         };
 
-        const EXECUTIVE_COMMITTEE = [
-            { 
-                name: "Monisha Talukder", 
-                role: "President", 
-                bio: "Leading strategic initiatives and industry partnerships.",
-                image: "images/president.jpg"
-            },
-            { 
-                name: "Futanta Chakma", 
-                role: "General Secretary", 
-                bio: "Coordinating club operations and university liaisons.",
-                image: "images/tech-head.jpg"
-            },
-            { 
-                name: "Dipta Roy", 
-                role: "Treasurer", 
-                bio: "Managing computational workshops and technical infrastructure.",
-                image: "images/secretary.jpg"
-            }
-        ];
-
-        const ADVISORY_COMMITTEE = [
-            { 
-                name: "Professor Dr. Abu Sayeed Md. Ripon Rouf", 
-                role: "Advisor & Chairman", 
-                bio: "",
-                image: "images/advisor.jpg" 
-            }
-        ];
-
-        const EVENTS = [
-            { title: "Stat-Quest 2024", date: "Oct 15, 2024", type: "Symposium", desc: "Annual inter-college statistics symposium featuring guest lectures." },
-            { title: "R Programming Workshop", date: "Nov 02, 2024", type: "Workshop", desc: "Hands-on session for beginners covering tidyverse and ggplot2." }
-        ];
-
-        const GALLERY_ITEMS = [
-            { title: "Annual Meet 2023", category: "Event", image: "images/gallery1.jpg" },
-            { title: "Workshop Session", category: "Education", image: "images/gallery2.jpg" }
-        ];
-
         const App = () => {
-            // Helper to get tab from URL
-            const getTabFromUrl = () => {
-                try {
-                    const path = window.location.pathname.split('/').filter(Boolean).pop();
-                    const validTabs = ['home', 'about', 'people', 'events', 'gallery', 'resources', 'verification'];
-                    return validTabs.includes(path) ? path : 'home';
-                } catch (e) {
-                    return 'home';
-                }
-            };
-
-            const [activeTab, setActiveTab] = useState(getTabFromUrl());
-            const [activeSubTab, setActiveSubTab] = useState('executive');
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
             const [scrolled, setScrolled] = useState(false);
             const moreDropdownRef = useRef(null);
 
-            // Handle URL changes via browser navigation
             useEffect(() => {
-                const handlePopState = () => {
-                    setActiveTab(getTabFromUrl());
-                };
-                window.addEventListener('popstate', handlePopState);
-                
                 const handleScroll = () => setScrolled(window.scrollY > 20);
                 window.addEventListener('scroll', handleScroll);
                 
@@ -135,244 +60,31 @@
                 window.addEventListener('mousedown', handleClickOutside);
                 
                 return () => {
-                    window.removeEventListener('popstate', handlePopState);
                     window.removeEventListener('scroll', handleScroll);
                     window.removeEventListener('mousedown', handleClickOutside);
                 };
             }, []);
 
-            // Custom Navigation Function with Error Handling for restricted environments (Previews)
-            const navigateTo = (tabId) => {
-                setActiveTab(tabId);
-                setIsMenuOpen(false);
-                setIsMoreDropdownOpen(false);
-                
-                try {
-                    // Update URL
-                    // On GitHub Pages, if the root is username.github.io, the path is /tabId
-                    // We use relative path to avoid absolute origin issues in blob/sandbox previews
-                    const newPath = tabId === 'home' ? './' : tabId;
-                    window.history.pushState({ tabId }, '', newPath);
-                } catch (e) {
-                    // This error occurs in local blob previews or sandboxed iframes.
-                    // We catch it so the app doesn't crash; the state update still changes the view.
-                    console.warn("History API pushState failed. This is expected in preview mode but will work on your live site.", e);
-                }
-                
-                window.scrollTo(0, 0);
+            // Redirect Navigation Function
+            const navigateTo = (url) => {
+                window.location.href = url;
             };
 
             const navLinks = [
-                { id: 'home', label: 'Home', icon: 'home' },
-                { id: 'about', label: 'About', icon: 'info' },
-                { id: 'people', label: 'People', icon: 'users-2' },
-                { id: 'events', label: 'Events', icon: 'calendar' },
-                { id: 'gallery', label: 'Gallery', icon: 'image' },
-                { id: 'resources', label: 'Resources', icon: 'book-open' },
+                { id: 'index.html', label: 'Home', icon: 'home', active: true },
+                { id: 'about.html', label: 'About', icon: 'info' },
+                { id: 'people.html', label: 'People', icon: 'users-2' },
+                { id: 'events.html', label: 'Events', icon: 'calendar' },
+                { id: 'gallery.html', label: 'Gallery', icon: 'image' },
+                { id: 'resources.html', label: 'Resources', icon: 'book-open' },
             ];
-
-            const renderContent = () => {
-                switch (activeTab) {
-                    case 'home':
-                        return (
-                            <div className="animate-in">
-                                <section className="relative h-[85vh] flex items-center justify-center bg-slate-900 text-white overflow-hidden">
-                                    <div className="absolute inset-0 opacity-20">
-                                        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                            <path d="M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z" fill="rgba(59, 130, 246, 0.5)" />
-                                        </svg>
-                                    </div>
-                                    <div className="relative z-10 text-center px-4 max-w-4xl">
-                                        <div className="inline-block bg-blue-600/20 text-blue-400 px-4 py-1 rounded-full text-sm font-bold mb-6 border border-blue-500/30">
-                                            Official Club of Statistics Dept.
-                                        </div>
-                                        <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white leading-tight">
-                                            Data For <br/><span className="text-blue-500">Better Decision</span>
-                                        </h1>
-                                        <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto font-light">
-                                            Statistics Club, JnU. Empowering the next generation of data scientists at Jagannath University, Dhaka.
-                                        </p>
-                                        <div className="flex flex-wrap justify-center gap-4">
-                                            <button onClick={() => navigateTo('events')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-blue-900/20 transition-all flex items-center gap-2">
-                                                Explore Events <Icon name="arrow-right" className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </section>
-                                <section className="py-20 bg-white">
-                                    <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-                                        {[
-                                            { label: "Members", value: "300+", icon: "users" },
-                                            { label: "Workshops", value: "45+", icon: "brain" },
-                                            { label: "Awards", value: "12+", icon: "trophy" },
-                                            { label: "Projects", value: "20+", icon: "code" },
-                                        ].map((stat, i) => (
-                                            <div key={i} className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 text-center">
-                                                <div className="flex justify-center mb-4 text-blue-600"><Icon name={stat.icon} className="w-8 h-8" /></div>
-                                                <div className="text-4xl font-black text-slate-900 mb-1">{stat.value}</div>
-                                                <div className="text-slate-500 font-bold uppercase text-xs tracking-widest">{stat.label}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
-                            </div>
-                        );
-                    case 'about':
-                        return (
-                            <div className="animate-in py-32 bg-slate-50 min-h-screen">
-                                <div className="max-w-7xl mx-auto px-4">
-                                    <div className="max-w-3xl mx-auto text-center mb-16">
-                                        <h2 className="text-5xl font-black mb-6 text-slate-900">About the Club</h2>
-                                        <p className="text-xl text-slate-500 font-medium">Jagannath University, Dhaka-1100</p>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 gap-16 items-center">
-                                        <div className="space-y-8">
-                                            <div className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
-                                                <h3 className="text-2xl font-bold text-slate-900 mb-4">Our Mission</h3>
-                                                <p className="text-slate-600 leading-relaxed text-lg font-light">
-                                                    The Statistics Club at Jagannath University (JnU) is dedicated to fostering an environment where students can apply theoretical knowledge to solve real-world problems using data.
-                                                </p>
-                                            </div>
-                                            <div className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
-                                                <h3 className="text-2xl font-bold text-slate-900 mb-4">Our Legacy</h3>
-                                                <p className="text-slate-600 leading-relaxed text-lg font-light">
-                                                    Established within the Department of Statistics, our club has been a hub for research, data visualization contests, and coding bootcamps since its inception.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="bg-blue-600 p-12 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
-                                            <Icon name="quote" className="w-12 h-12 mb-8 opacity-40" />
-                                            <p className="italic text-2xl font-medium leading-snug">"Statistical thinking will one day be as necessary for efficient citizenship as the ability to read and write."</p>
-                                            <p className="mt-8 font-black uppercase tracking-widest text-sm">— H.G. Wells</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    case 'people':
-                        const membersToShow = activeSubTab === 'executive' ? EXECUTIVE_COMMITTEE : ADVISORY_COMMITTEE;
-                        return (
-                            <div className="animate-in py-32 bg-white min-h-screen">
-                                <div className="max-w-7xl mx-auto px-4">
-                                    <div className="text-center mb-16">
-                                        <h2 className="text-5xl font-black mb-4 text-slate-900">Our People</h2>
-                                        <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Meet the Visionaries</p>
-                                    </div>
-
-                                    <div className="flex flex-wrap justify-center gap-4 mb-20">
-                                        <button 
-                                            onClick={() => setActiveSubTab('executive')}
-                                            className={`px-10 py-4 rounded-2xl font-black transition-all ${
-                                                activeSubTab === 'executive' 
-                                                ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' 
-                                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                            }`}
-                                        >
-                                            Executive Committee 2025
-                                        </button>
-                                        <button 
-                                            onClick={() => setActiveSubTab('advisory')}
-                                            className={`px-10 py-4 rounded-2xl font-black transition-all ${
-                                                activeSubTab === 'advisory' 
-                                                ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' 
-                                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                            }`}
-                                        >
-                                            Advisory Committee
-                                        </button>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                                        {membersToShow.map((member, i) => (
-                                            <div key={i} className="bg-slate-50 p-10 rounded-[2.5rem] text-center border border-slate-100 hover:shadow-2xl transition-all group">
-                                                <div className="relative mb-8 inline-block">
-                                                    <img 
-                                                        src={member.image} 
-                                                        alt={member.name}
-                                                        onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${member.name}`; }}
-                                                        className="w-40 h-40 rounded-[2rem] mx-auto object-cover border-8 border-white shadow-xl group-hover:-translate-y-2 transition-transform"
-                                                    />
-                                                </div>
-                                                <h4 className="font-black text-2xl text-slate-900 mb-1">{member.name}</h4>
-                                                <p className="text-blue-600 font-bold text-sm uppercase tracking-widest mb-4">{member.role}</p>
-                                                <p className="text-slate-500 leading-relaxed font-light">{member.bio}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    case 'verification':
-                        return (
-                            <div className="animate-in py-32 bg-slate-50 min-h-screen flex items-center justify-center px-4">
-                                <div className="max-w-xl w-full bg-white p-12 rounded-[3rem] shadow-2xl shadow-blue-100 text-center animate-scale border border-blue-50">
-                                    <div className="mb-10 flex justify-center">
-                                        <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center border-4 border-green-100">
-                                            <svg className="w-12 h-12 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-                                                <polyline points="20 6 9 17 4 12" className="animate-check" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">Verified</h2>
-                                    <p className="text-slate-600 text-lg leading-relaxed mb-8">
-                                        This certificate is officially verified by the <br/> <span className="text-blue-600 font-black">Statistics Club, JnU</span>.
-                                    </p>
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 overflow-hidden">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Registry Link</p>
-                                        <a href="https://statclubjnu.github.io/certificate-verification" target="_blank" className="text-blue-600 font-mono text-sm block truncate hover:underline">
-                                            statclubjnu.github.io/certificate-verification
-                                        </a>
-                                    </div>
-                                    <div className="pt-8 border-t border-slate-100">
-                                        <p className="text-slate-400 text-xs font-bold mb-3 uppercase tracking-widest">Manual Inquiries</p>
-                                        <a href="mailto:statisticsclub@stat.jnu.ac.bd" className="text-slate-900 font-black hover:text-blue-600 text-lg">
-                                            statisticsclub@stat.jnu.ac.bd
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    case 'events':
-                        return (
-                            <div className="animate-in py-32 max-w-7xl mx-auto px-4 min-h-screen">
-                                <h2 className="text-5xl font-black mb-16 text-center text-slate-900 uppercase tracking-tighter">Upcoming Events</h2>
-                                <div className="grid md:grid-cols-2 gap-8">
-                                    {EVENTS.map((event, i) => (
-                                        <div key={i} className="flex flex-col md:flex-row bg-slate-50 rounded-[2.5rem] overflow-hidden border border-slate-100 hover:shadow-xl transition-all group">
-                                            <div className="md:w-1/3 bg-blue-600 flex items-center justify-center p-8 group-hover:bg-blue-700 transition-colors">
-                                                <Icon name="calendar" className="w-16 h-16 text-white" />
-                                            </div>
-                                            <div className="p-10 flex-1">
-                                                <span className="text-blue-600 font-black text-xs uppercase tracking-[0.2em]">{event.type}</span>
-                                                <h3 className="text-2xl font-black mt-2 mb-4 text-slate-900">{event.title}</h3>
-                                                <p className="text-slate-500 mb-6 font-light">{event.desc}</p>
-                                                <div className="flex items-center gap-2 text-slate-400 font-bold text-sm">
-                                                    <Icon name="map-pin" className="w-4 h-4" />
-                                                    Dept of Statistics, JnU
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    default:
-                        return (
-                            <div className="py-32 text-center min-h-screen flex flex-col items-center justify-center">
-                                <h2 className="font-black text-slate-300 text-6xl mb-4">404</h2>
-                                <p className="text-slate-500 font-bold uppercase tracking-widest">Section Coming Soon</p>
-                                <button onClick={() => navigateTo('home')} className="mt-8 text-blue-600 font-black hover:underline">Back to Home</button>
-                            </div>
-                        );
-                }
-            };
 
             return (
                 <div className="min-h-screen selection:bg-blue-600 selection:text-white">
+                    {/* Navigation Bar */}
                     <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg py-3' : 'bg-transparent py-8'}`}>
                         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                            <div onClick={() => navigateTo('home')} className="flex items-center gap-4 cursor-pointer group">
+                            <div onClick={() => navigateTo('index.html')} className="flex items-center gap-4 cursor-pointer group">
                                 <div className="relative w-12 h-12 flex items-center justify-center">
                                     <img 
                                         src="images/Club_Logo.png" 
@@ -384,10 +96,10 @@
                                     <Icon name="pie-chart" className="absolute text-white w-6 h-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                                 <div className="flex flex-col text-left">
-                                    <span className={`text-xl font-black leading-none tracking-tighter ${!scrolled && activeTab === 'home' ? 'text-white' : 'text-slate-900'}`}>
+                                    <span className={`text-xl font-black leading-none tracking-tighter ${!scrolled ? 'text-white' : 'text-slate-900'}`}>
                                         Statistics Club <span className="text-blue-500">JnU</span>
                                     </span>
-                                    <span className={`text-[9px] font-bold uppercase tracking-[0.3em] mt-1 ${!scrolled && activeTab === 'home' ? 'text-white/60' : 'text-slate-400'}`}>
+                                    <span className={`text-[9px] font-bold uppercase tracking-[0.3em] mt-1 ${!scrolled ? 'text-white/60' : 'text-slate-400'}`}>
                                         Dhaka, Bangladesh
                                     </span>
                                 </div>
@@ -399,9 +111,9 @@
                                         key={link.id} 
                                         onClick={() => navigateTo(link.id)}
                                         className={`text-xs font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl flex items-center gap-2 ${
-                                            activeTab === link.id 
+                                            link.active 
                                             ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' 
-                                            : (!scrolled && activeTab === 'home' ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900')
+                                            : (!scrolled ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900')
                                         }`}
                                     >
                                         {link.label}
@@ -412,9 +124,9 @@
                                     <button 
                                         onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
                                         className={`text-xs font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl flex items-center gap-2 ${
-                                            isMoreDropdownOpen || activeTab === 'verification'
+                                            isMoreDropdownOpen 
                                             ? 'bg-slate-900 text-white' 
-                                            : (!scrolled && activeTab === 'home' ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:bg-slate-50')
+                                            : (!scrolled ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:bg-slate-50')
                                         }`}
                                     >
                                         More <Icon name="chevron-down" className={`w-3 h-3 transition-transform ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
@@ -423,10 +135,10 @@
                                     {isMoreDropdownOpen && (
                                         <div className="absolute top-full right-0 mt-4 w-72 bg-white rounded-[2rem] shadow-2xl border border-slate-100 py-4 overflow-hidden animate-in">
                                             <button 
-                                                onClick={() => navigateTo('verification')}
-                                                className={`w-full text-left px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group ${activeTab === 'verification' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-600'}`}
+                                                onClick={() => navigateTo('verification.html')}
+                                                className="w-full text-left px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group text-slate-600"
                                             >
-                                                <div className={`p-3 rounded-xl ${activeTab === 'verification' ? 'bg-blue-600 text-white' : 'bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors'}`}>
+                                                <div className="p-3 rounded-xl bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                                     <Icon name="shield-check" className="w-4 h-4" />
                                                 </div>
                                                 <div className="flex flex-col">
@@ -451,15 +163,15 @@
                                     <button 
                                         key={link.id} 
                                         onClick={() => navigateTo(link.id)} 
-                                        className={`text-left font-black p-5 rounded-2xl flex items-center gap-4 text-lg uppercase tracking-tight ${activeTab === link.id ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-slate-50 text-slate-600'}`}
+                                        className={`text-left font-black p-5 rounded-2xl flex items-center gap-4 text-lg uppercase tracking-tight ${link.active ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-slate-50 text-slate-600'}`}
                                     >
                                         <Icon name={link.icon} className="w-6 h-6" />
                                         {link.label}
                                     </button>
                                 ))}
                                 <button 
-                                    onClick={() => navigateTo('verification')} 
-                                    className={`text-left font-black p-5 rounded-2xl flex items-center gap-4 text-lg uppercase tracking-tight ${activeTab === 'verification' ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-slate-50 text-slate-600'}`}
+                                    onClick={() => navigateTo('verification.html')} 
+                                    className="text-left font-black p-5 rounded-2xl flex items-center gap-4 text-lg uppercase tracking-tight bg-slate-50 text-slate-600"
                                 >
                                     <Icon name="shield-check" className="w-6 h-6" />
                                     Verification
@@ -468,8 +180,52 @@
                         )}
                     </nav>
 
-                    <main>{renderContent()}</main>
+                    <main className="animate-in">
+                        {/* Hero Section */}
+                        <section className="relative h-[85vh] flex items-center justify-center bg-slate-900 text-white overflow-hidden">
+                            <div className="absolute inset-0 opacity-20">
+                                <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                    <path d="M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z" fill="rgba(59, 130, 246, 0.5)" />
+                                </svg>
+                            </div>
+                            <div className="relative z-10 text-center px-4 max-w-4xl">
+                                <div className="inline-block bg-blue-600/20 text-blue-400 px-4 py-1 rounded-full text-sm font-bold mb-6 border border-blue-500/30">
+                                    Official Club of Statistics Dept.
+                                </div>
+                                <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white leading-tight">
+                                    Data For <br/><span className="text-blue-500">Better Decision</span>
+                                </h1>
+                                <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto font-light">
+                                    Statistics Club, JnU. Empowering the next generation of data scientists at Jagannath University, Dhaka.
+                                </p>
+                                <div className="flex flex-wrap justify-center gap-4">
+                                    <button onClick={() => navigateTo('events.html')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-blue-900/20 transition-all flex items-center gap-2">
+                                        Explore Events <Icon name="arrow-right" className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
 
+                        {/* Stats Section */}
+                        <section className="py-20 bg-white">
+                            <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+                                {[
+                                    { label: "Members", value: "300+", icon: "users" },
+                                    { label: "Workshops", value: "45+", icon: "brain" },
+                                    { label: "Awards", value: "12+", icon: "trophy" },
+                                    { label: "Projects", value: "20+", icon: "code" },
+                                ].map((stat, i) => (
+                                    <div key={i} className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 text-center">
+                                        <div className="flex justify-center mb-4 text-blue-600"><Icon name={stat.icon} className="w-8 h-8" /></div>
+                                        <div className="text-4xl font-black text-slate-900 mb-1">{stat.value}</div>
+                                        <div className="text-slate-500 font-bold uppercase text-xs tracking-widest">{stat.label}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </main>
+
+                    {/* Footer */}
                     <footer className="bg-slate-900 text-slate-500 py-24">
                         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-16">
                             <div className="md:col-span-2 text-left">
@@ -491,9 +247,10 @@
                             <div className="text-left">
                                 <h4 className="text-white font-black mb-8 uppercase tracking-widest text-xs">Navigation</h4>
                                 <div className="grid grid-cols-1 gap-4 text-sm font-bold">
-                                    {['Home', 'About', 'People', 'Events', 'Gallery'].map(item => (
-                                        <button key={item} onClick={() => navigateTo(item.toLowerCase())} className="text-left hover:text-blue-500 transition-colors uppercase tracking-widest">{item}</button>
+                                    {navLinks.map(item => (
+                                        <button key={item.id} onClick={() => navigateTo(item.id)} className="text-left hover:text-blue-500 transition-colors uppercase tracking-widest">{item.label}</button>
                                     ))}
+                                    <button onClick={() => navigateTo('verification.html')} className="text-left hover:text-blue-500 transition-colors uppercase tracking-widest">Verification</button>
                                 </div>
                             </div>
                             <div className="text-left">
@@ -516,6 +273,3 @@
     </script>
 </body>
 </html>
-
-
-
