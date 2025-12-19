@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification - Statistics Club, JnU</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .animate-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .animate-check {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+        .animate-scale {
+            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useEffect } = React;
+
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            useEffect(() => {
+                if (window.lucide) lucide.createIcons();
+            }, [name]);
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const App = () => {
+            const homeUrl = "https://statclubjnu.github.io";
+
+            return (
+                <div className="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+                    {/* Simplified Navbar for Verification Page */}
+                    <nav className="bg-white/95 backdrop-blur-xl shadow-sm py-4 border-b border-slate-100">
+                        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                            <a href={homeUrl} className="flex items-center gap-4 group">
+                                <div className="relative w-10 h-10 flex items-center justify-center">
+                                    <img 
+                                        src="images/Club_Logo.png" 
+                                        alt="JnU Stat Club Logo"
+                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                        className="w-full h-full object-contain relative z-10"
+                                    />
+                                    <div className="absolute inset-0 bg-blue-600 rounded-xl group-hover:rotate-[15deg] transition-transform duration-300"></div>
+                                    <Icon name="shield-check" className="absolute text-white w-5 h-5 z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
+                                <div className="flex flex-col text-left">
+                                    <span className="text-lg font-black leading-none tracking-tighter text-slate-900">
+                                        Statistics Club <span className="text-blue-500">JnU</span>
+                                    </span>
+                                    <span className="text-[8px] font-bold uppercase tracking-[0.3em] mt-1 text-slate-400">
+                                        Dhaka, Bangladesh
+                                    </span>
+                                </div>
+                            </a>
+                            <a href={homeUrl} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                                <Icon name="arrow-left" className="w-3 h-3" />
+                                Back to Home
+                            </a>
+                        </div>
+                    </nav>
+
+                    {/* Main Verification Content */}
+                    <main className="flex-1 flex items-center justify-center py-20 px-4">
+                        <div className="max-w-xl w-full bg-white p-12 rounded-[3rem] shadow-2xl shadow-blue-100 text-center animate-scale border border-blue-50">
+                            <div className="mb-10 flex justify-center">
+                                <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center border-4 border-green-100">
+                                    <svg className="w-12 h-12 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" className="animate-check" />
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">Verified</h2>
+                            
+                            <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                                This certificate is officially verified by the <br/> 
+                                <span className="text-blue-600 font-black">Statistics Club, JnU</span>.
+                            </p>
+                            
+                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 overflow-hidden">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Public Registry</p>
+                                <code className="text-blue-600 font-mono text-sm block truncate">
+                                    statclubjnu.github.io/certificate-verification
+                                </code>
+                            </div>
+
+                            <div className="pt-8 border-t border-slate-100">
+                                <p className="text-slate-400 text-xs font-bold mb-3 uppercase tracking-widest text-center">Manual Inquiries</p>
+                                <a href="mailto:statisticsclubjnu@stat.jnu.ac.bd" className="text-slate-900 font-black hover:text-blue-600 text-lg block transition-colors">
+                                    statisticsclubjnu@stat.jnu.ac.bd
+                                </a>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-slate-500 py-12">
+                        <div className="max-w-7xl mx-auto px-6 text-center">
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em]">
+                                © 2026 Statistics Club, JnU. Certificate Authority Registry.
+                            </p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
