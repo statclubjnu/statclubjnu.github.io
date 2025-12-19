@@ -12,18 +12,35 @@
     <style>
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-in { animation: fadeIn 0.6s ease-out forwards; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-slate-50">
     <div id="root"></div>
     <script type="text/babel">
-        const { useEffect } = React;
+        const { useState, useEffect, useRef } = React;
+
         const Icon = ({ name, className = "w-5 h-5" }) => {
             useEffect(() => { if (window.lucide) lucide.createIcons(); }, [name]);
             return <i data-lucide={name} className={className}></i>;
         };
 
         const App = () => {
+            const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+            const moreDropdownRef = useRef(null);
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (moreDropdownRef.current && !moreDropdownRef.current.contains(event.target)) {
+                        setIsMoreDropdownOpen(false);
+                    }
+                };
+                window.addEventListener('mousedown', handleClickOutside);
+                return () => window.removeEventListener('mousedown', handleClickOutside);
+            }, []);
+
             const navLinks = [
                 { id: 'index.html', label: 'Home' },
                 { id: 'about.html', label: 'About', active: true },
@@ -42,12 +59,43 @@
                                     <img src="images/Club_Logo.png" alt="Logo" className="w-full h-full object-contain relative z-10" />
                                     <div className="absolute inset-0 bg-blue-600 rounded-xl"></div>
                                 </div>
-                                <span className="text-xl font-black leading-none tracking-tighter text-slate-900">STATCLUB <span className="text-blue-500">JnU</span></span>
+                                <span className="text-xl font-black leading-none tracking-tighter text-slate-900 uppercase">STATCLUB <span className="text-blue-500">JnU</span></span>
                             </a>
                             <div className="hidden md:flex gap-2 items-center">
                                 {navLinks.map(link => (
-                                    <a key={link.id} href={link.id} className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all ${link.active ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>{link.label}</a>
+                                    <a key={link.id} href={link.id} className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all ${link.active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:bg-slate-50'}`}>{link.label}</a>
                                 ))}
+
+                                {/* More Dropdown */}
+                                <div className="relative ml-2" ref={moreDropdownRef}>
+                                    <button 
+                                        onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                                        className={`text-xs font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl flex items-center gap-2 ${
+                                            isMoreDropdownOpen 
+                                            ? 'bg-slate-900 text-white' 
+                                            : 'text-slate-500 hover:bg-slate-50'
+                                        }`}
+                                    >
+                                        More <Icon name="chevron-down" className={`w-3 h-3 transition-transform ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {isMoreDropdownOpen && (
+                                        <div className="absolute top-full right-0 mt-4 w-72 bg-white rounded-[2rem] shadow-2xl border border-slate-100 py-4 overflow-hidden animate-in">
+                                            <a 
+                                                href="verification.html"
+                                                className="w-full text-left px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group text-slate-600"
+                                            >
+                                                <div className="p-3 rounded-xl bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                                    <Icon name="shield-check" className="w-4 h-4" />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-black uppercase tracking-tight">Verification</span>
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Certificate Auth</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </nav>
