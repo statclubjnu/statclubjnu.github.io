@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Statistics Club, JnU</title>
+    <title>About | Statistics Club, JnU</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <script src="https://unpkg.com/lucide@latest" crossorigin></script>
     <style>
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-in { animation: fadeIn 0.6s ease-out forwards; }
@@ -17,121 +17,159 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-white">
     <div id="root"></div>
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
         const Icon = ({ name, className = "w-5 h-5" }) => {
-            useEffect(() => { if (window.lucide) lucide.createIcons(); }, [name]);
+            React.useEffect(() => { 
+                if (window.lucide) lucide.createIcons(); 
+            }, [name]);
             return <i data-lucide={name} className={className}></i>;
         };
 
         const App = () => {
-            const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
-            const moreDropdownRef = useRef(null);
+            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+            const [isMoreDropdownOpen, setIsMoreDropdownOpen] = React.useState(false);
+            const [scrolled, setScrolled] = React.useState(false);
+            const moreDropdownRef = React.useRef(null);
 
-            useEffect(() => {
-                const handleClickOutside = (event) => {
-                    if (moreDropdownRef.current && !moreDropdownRef.current.contains(event.target)) {
-                        setIsMoreDropdownOpen(false);
-                    }
+            React.useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                const handleClickOutside = (e) => {
+                    if (moreDropdownRef.current && !moreDropdownRef.current.contains(e.target)) setIsMoreDropdownOpen(false);
                 };
                 window.addEventListener('mousedown', handleClickOutside);
-                return () => window.removeEventListener('mousedown', handleClickOutside);
+                return () => {
+                    window.removeEventListener('scroll', handleScroll);
+                    window.removeEventListener('mousedown', handleClickOutside);
+                };
             }, []);
 
             const navLinks = [
-                { id: 'index.html', label: 'Home' },
-                { id: 'about.html', label: 'About', active: true },
-                { id: 'people.html', label: 'People' },
-                { id: 'events.html', label: 'Events' },
-                { id: 'gallery.html', label: 'Gallery' },
-                { id: 'resources.html', label: 'Resources' },
+                { id: 'index.html', label: 'Home', icon: 'home' },
+                { id: 'about.html', label: 'About', icon: 'info', active: true },
+                { id: 'people.html', label: 'People', icon: 'users-2' },
+                { id: 'events.html', label: 'Events', icon: 'calendar' },
+                { id: 'gallery.html', label: 'Gallery', icon: 'image' },
+                { id: 'resources.html', label: 'Resources', icon: 'book-open' },
             ];
 
             return (
-                <div className="min-h-screen">
-                    <nav className="fixed w-full z-50 bg-white shadow-lg py-3">
+                <div className="min-h-screen selection:bg-blue-600 selection:text-white">
+                    {/* Navigation Bar */}
+                    <nav className={`fixed w-full z-50 transition-all duration-500 bg-white/95 backdrop-blur-xl shadow-lg py-3`}>
                         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                            <a href="index.html" className="flex items-center gap-4 group">
-                                <div className="relative w-10 h-10 flex items-center justify-center">
-                                    <img src="images/Club_Logo.png" alt="Logo" className="w-full h-full object-contain relative z-10" />
-                                    <div className="absolute inset-0 bg-blue-600 rounded-xl"></div>
+                            <div onClick={() => window.location.href='index.html'} className="flex items-center gap-4 cursor-pointer group">
+                                <div className="relative w-12 h-12 flex items-center justify-center">
+                                    <div className="absolute inset-0 bg-blue-600 rounded-2xl"></div>
+                                    <Icon name="pie-chart" className="text-white w-6 h-6 z-10" />
                                 </div>
-                                <span className="text-xl font-black leading-none tracking-tighter text-slate-900 uppercase">STATCLUB <span className="text-blue-500">JnU</span></span>
-                            </a>
+                                <div className="flex flex-col text-left">
+                                    <span className="text-xl font-black leading-none tracking-tighter text-slate-900">
+                                        Statistics Club <span className="text-blue-500">JnU</span>
+                                    </span>
+                                    <span className="text-[9px] font-bold uppercase tracking-[0.3em] mt-1 text-slate-400">Dhaka, Bangladesh</span>
+                                </div>
+                            </div>
+                            
                             <div className="hidden md:flex gap-2 items-center">
                                 {navLinks.map(link => (
-                                    <a key={link.id} href={link.id} className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all ${link.active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-500 hover:bg-slate-50'}`}>{link.label}</a>
+                                    <button key={link.id} onClick={() => window.location.href=link.id} 
+                                        className={`text-xs font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl flex items-center gap-2 ${link.active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/10' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                        {link.label}
+                                    </button>
                                 ))}
-
-                                {/* More Dropdown */}
                                 <div className="relative ml-2" ref={moreDropdownRef}>
-                                    <button 
-                                        onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
-                                        className={`text-xs font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl flex items-center gap-2 ${
-                                            isMoreDropdownOpen 
-                                            ? 'bg-slate-900 text-white' 
-                                            : 'text-slate-500 hover:bg-slate-50'
-                                        }`}
-                                    >
+                                    <button onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)} 
+                                        className={`text-xs font-black uppercase tracking-widest transition-all px-4 py-2 rounded-xl flex items-center gap-2 ${isMoreDropdownOpen ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-50'}`}>
                                         More <Icon name="chevron-down" className={`w-3 h-3 transition-transform ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
                                     </button>
-
                                     {isMoreDropdownOpen && (
                                         <div className="absolute top-full right-0 mt-4 w-72 bg-white rounded-[2rem] shadow-2xl border border-slate-100 py-4 overflow-hidden animate-in">
-                                            <a 
-                                                href="verification.html"
-                                                className="w-full text-left px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group text-slate-600"
-                                            >
-                                                <div className="p-3 rounded-xl bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                                    <Icon name="shield-check" className="w-4 h-4" />
-                                                </div>
+                                            <button onClick={() => window.location.href='verification.html'} className="w-full text-left px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group text-slate-600">
+                                                <div className="p-3 rounded-xl bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors"><Icon name="shield-check" className="w-4 h-4" /></div>
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-black uppercase tracking-tight">Verification</span>
                                                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Certificate Auth</span>
                                                 </div>
-                                            </a>
+                                            </button>
                                         </div>
                                     )}
                                 </div>
                             </div>
+
+                            <button className="md:hidden p-3 bg-blue-600 text-white rounded-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                                <Icon name={isMenuOpen ? "x" : "menu"} className="w-6 h-6" />
+                            </button>
                         </div>
+
+                        {/* Mobile Navigation */}
+                        {isMenuOpen && (
+                            <div className="fixed inset-0 top-[88px] bg-white z-40 p-6 flex flex-col gap-3 animate-in md:hidden">
+                                {navLinks.map(link => (
+                                    <button key={link.id} onClick={() => window.location.href=link.id} className={`text-left font-black p-5 rounded-2xl flex items-center gap-4 text-lg uppercase tracking-tight ${link.active ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-slate-50 text-slate-600'}`}>
+                                        <Icon name={link.icon} className="w-6 h-6" /> {link.label}
+                                    </button>
+                                ))}
+                                <button onClick={() => window.location.href='verification.html'} className="text-left font-black p-5 rounded-2xl flex items-center gap-4 text-lg uppercase tracking-tight bg-slate-50 text-slate-600">
+                                    <Icon name="shield-check" className="w-6 h-6" /> Verification
+                                </button>
+                            </div>
+                        )}
                     </nav>
 
-                    <main className="animate-in py-32">
-                        <div className="max-w-7xl mx-auto px-4">
-                            <div className="max-w-3xl mx-auto text-center mb-16">
-                                <h2 className="text-5xl font-black mb-6 text-slate-900 tracking-tight">About the Club</h2>
-                                <p className="text-xl text-slate-500 font-medium">Department of Statistics, Jagannath University</p>
-                            </div>
-                            <div className="grid md:grid-cols-2 gap-16 items-center">
-                                <div className="space-y-8">
-                                    <div className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
-                                        <h3 className="text-2xl font-bold text-slate-900 mb-4">Our Mission</h3>
-                                        <p className="text-slate-600 leading-relaxed text-lg font-light">Dedicated to fostering an environment where students apply theoretical knowledge to solve real-world problems using data.</p>
+                    <main className="pt-40 pb-20 animate-in">
+                        <div className="max-w-4xl mx-auto px-6">
+                            <div className="inline-block bg-blue-50 text-blue-600 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-6">About Us</div>
+                            <h2 className="text-5xl md:text-6xl font-black mb-12 text-slate-900 tracking-tight leading-tight">Empowering <span className="text-blue-600">Statistical</span> Excellence</h2>
+                            
+                            <div className="grid gap-12 text-lg text-slate-600 leading-relaxed font-light">
+                                <p>Statistics Club, JnU is the premier academic and extracurricular platform for the students of the Department of Statistics at Jagannath University. Established with a vision to bridge the gap between theoretical knowledge and practical application, we foster a community of aspiring data scientists and analysts.</p>
+                                
+                                <div className="grid md:grid-cols-2 gap-8 mt-8">
+                                    <div className="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-colors">
+                                        <div className="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200"><Icon name="target" /></div>
+                                        <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight uppercase">Our Mission</h3>
+                                        <p className="text-base font-light leading-relaxed">To equip students with modern data analysis tools, research methodologies, and soft skills required for a successful career in academia and industry.</p>
                                     </div>
-                                    <div className="p-8 bg-white rounded-3xl shadow-sm border border-slate-100">
-                                        <h3 className="text-2xl font-bold text-slate-900 mb-4">Our Legacy</h3>
-                                        <p className="text-slate-600 leading-relaxed text-lg font-light">Established within the Department of Statistics, our club has been a hub for research and coding bootcamps since its inception.</p>
+                                    <div className="p-10 rounded-[2.5rem] bg-blue-600 text-white shadow-2xl shadow-blue-100">
+                                        <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-6"><Icon name="eye" /></div>
+                                        <h3 className="text-2xl font-black mb-4 tracking-tight uppercase">Our Vision</h3>
+                                        <p className="text-base font-light leading-relaxed">To become a center of excellence for data science in Bangladesh, producing leaders who solve global challenges through data-driven insights.</p>
                                     </div>
                                 </div>
-                                <div className="bg-blue-600 p-12 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
-                                    <Icon name="quote" className="w-12 h-12 mb-8 opacity-40" />
-                                    <p className="italic text-2xl font-medium leading-snug">"Statistical thinking will one day be as necessary for efficient citizenship as the ability to read and write."</p>
-                                    <p className="mt-8 font-black uppercase tracking-widest text-sm">— H.G. Wells</p>
+
+                                <div className="mt-12 p-10 bg-slate-900 rounded-[3rem] text-white">
+                                    <div className="flex flex-col md:flex-row gap-10 items-center">
+                                        <div className="flex-1">
+                                            <h3 className="text-3xl font-black mb-4">Join Our Journey</h3>
+                                            <p className="text-slate-400 font-light mb-6">Be part of a community that values curiosity, precision, and the power of data.</p>
+                                            <button className="px-8 py-4 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all">Become a Member</button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+                                            <div className="p-6 bg-white/5 rounded-2xl text-center">
+                                                <div className="text-2xl font-black text-blue-500">2014</div>
+                                                <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Founded</div>
+                                            </div>
+                                            <div className="p-6 bg-white/5 rounded-2xl text-center">
+                                                <div className="text-2xl font-black text-blue-500">100+</div>
+                                                <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Alumni</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </main>
 
                     <footer className="bg-slate-900 text-slate-500 py-12 text-center text-[10px] font-black uppercase tracking-[0.4em]">
-                        <p>© 2026 Statistics Club, JnU. Dhaka-1100, Bangladesh.</p>
+                        © 2026 Statistics Club, JnU. Designed for the Future.
                     </footer>
                 </div>
             );
         };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
