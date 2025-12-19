@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Club JNU</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Simple Icon Component to wrap Lucide
+        const Icon = ({ name, className = "w-5 h-5" }) => {
+            useEffect(() => {
+                lucide.createIcons();
+            }, [name]);
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const TEAM_MEMBERS = [
+            { name: "Dr. Arun Kumar", role: "Faculty Advisor", bio: "Specializes in Bayesian Inference and Stochastic Processes." },
+            { name: "Priya Sharma", role: "President", bio: "Passionate about Machine Learning and Social Statistics." },
+            { name: "Rahul Verma", role: "Technical Head", bio: "R & Python enthusiast, focusing on Econometrics." },
+            { name: "Ananya Das", role: "General Secretary", bio: "Expert in Data Visualization and Survey Methodology." }
+        ];
+
+        const EVENTS = [
+            { title: "Stat-Quest 2024", date: "Oct 15, 2024", type: "Symposium", desc: "Annual inter-college statistics symposium featuring guest lectures." },
+            { title: "R Programming Workshop", date: "Nov 02, 2024", type: "Workshop", desc: "Hands-on session for beginners covering tidyverse and ggplot2." },
+            { title: "DataViz Challenge", date: "Nov 20, 2024", type: "Competition", desc: "Create the most impactful visualization from a mystery dataset." },
+            { title: "Bayesian Hackathon", date: "Dec 05, 2024", type: "Hackathon", desc: "Solving real-world problems using probabilistic programming." }
+        ];
+
+        const GALLERY_ITEMS = [
+            { title: "Annual Meet 2023", category: "Event" },
+            { title: "Workshop Session", category: "Education" },
+            { title: "Winners Circle", category: "Awards" },
+            { title: "Field Visit", category: "Research" }
+        ];
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [scrolled, setScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                lucide.createIcons();
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const navLinks = [
+                { id: 'home', label: 'Home', icon: 'bar-chart-3' },
+                { id: 'about', label: 'About', icon: 'users' },
+                { id: 'events', label: 'Events', icon: 'calendar' },
+                { id: 'gallery', label: 'Gallery', icon: 'image' },
+                { id: 'resources', label: 'Resources', icon: 'book-open' },
+            ];
+
+            const renderContent = () => {
+                switch (activeTab) {
+                    case 'home':
+                        return (
+                            <div className="animate-in">
+                                <section className="relative h-[80vh] flex items-center justify-center bg-slate-900 text-white overflow-hidden">
+                                    <div className="absolute inset-0 opacity-20">
+                                        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                            <path d="M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z" fill="rgba(59, 130, 246, 0.5)" />
+                                        </svg>
+                                    </div>
+                                    <div className="relative z-10 text-center px-4 max-w-4xl">
+                                        <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
+                                            Where Data <span className="text-blue-400">Meets</span> Discovery
+                                        </h1>
+                                        <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto">
+                                            Statistics Club, JNU. Empowering the next generation of data scientists.
+                                        </p>
+                                        <div className="flex flex-wrap justify-center gap-4">
+                                            <button onClick={() => setActiveTab('events')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-all flex items-center gap-2">
+                                                Explore Events <Icon name="chevron-right" className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section className="py-16 bg-white">
+                                    <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                                        {[
+                                            { label: "Members", value: "250+", icon: "users" },
+                                            { label: "Workshops", value: "40+", icon: "brain-circuit" },
+                                            { label: "Competitions", value: "15+", icon: "trending-up" },
+                                            { label: "Research", value: "10+", icon: "pie-chart" },
+                                        ].map((stat, i) => (
+                                            <div key={i} className="p-6 rounded-2xl bg-slate-50 hover:shadow-lg transition-shadow">
+                                                <div className="flex justify-center mb-4 text-blue-600"><Icon name={stat.icon} /></div>
+                                                <div className="text-3xl font-bold text-slate-900">{stat.value}</div>
+                                                <div className="text-slate-500 font-medium">{stat.label}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            </div>
+                        );
+                    case 'about':
+                        return (
+                            <div className="animate-in py-24 bg-slate-50">
+                                <div className="max-w-7xl mx-auto px-4 text-center">
+                                    <h2 className="text-4xl font-bold mb-12">About Us</h2>
+                                    <div className="grid md:grid-cols-2 gap-12 text-left items-center">
+                                        <div className="space-y-6">
+                                            <p className="text-slate-600 leading-relaxed">The Statistics Club at JNU is a community for students to explore probability, inference, and computational stats.</p>
+                                        </div>
+                                        <div className="bg-blue-600 p-8 rounded-3xl text-white">
+                                            <p className="italic text-xl">"In God we trust; all others must bring data."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    case 'events':
+                        return (
+                            <div className="animate-in py-24 max-w-7xl mx-auto px-4">
+                                <h2 className="text-4xl font-bold mb-12">Upcoming Events</h2>
+                                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {EVENTS.map((event, i) => (
+                                        <div key={i} className="bg-white rounded-3xl border p-6 hover:shadow-xl transition-all">
+                                            <div className="text-xs font-bold text-blue-600 mb-2 uppercase">{event.type}</div>
+                                            <h3 className="text-xl font-bold mb-2">{event.title}</h3>
+                                            <p className="text-slate-500 text-sm mb-4">{event.desc}</p>
+                                            <div className="text-slate-400 text-xs flex items-center gap-1">
+                                                <Icon name="calendar" className="w-3 h-3" /> {event.date}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    case 'gallery':
+                        return (
+                            <div className="animate-in py-24 max-w-7xl mx-auto px-4">
+                                <h2 className="text-4xl font-bold mb-12 text-center">Gallery</h2>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {GALLERY_ITEMS.map((item, i) => (
+                                        <div key={i} className="aspect-square bg-slate-100 rounded-2xl flex items-center justify-center relative group overflow-hidden">
+                                            <Icon name="image" className="w-12 h-12 text-slate-300" />
+                                            <div className="absolute inset-0 bg-blue-600/80 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                                                <span className="font-bold">{item.title}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    case 'resources':
+                        return (
+                            <div className="animate-in py-24 max-w-3xl mx-auto px-4">
+                                <h2 className="text-4xl font-bold mb-12 text-center">Resources</h2>
+                                <div className="space-y-4">
+                                    {["Intro to R", "Regression Guide", "Inference Handbook"].map((res, i) => (
+                                        <div key={i} className="p-6 bg-white border rounded-2xl flex justify-between items-center">
+                                            <span className="font-bold">{res}</span>
+                                            <button className="text-blue-600 font-bold hover:underline">Download</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    default: return null;
+                }
+            };
+
+            return (
+                <div className="min-h-screen">
+                    <nav className={`fixed w-full z-50 transition-all ${scrolled ? 'bg-white shadow-sm py-3' : 'bg-transparent py-6'}`}>
+                        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+                            <div onClick={() => setActiveTab('home')} className="flex items-center gap-2 cursor-pointer">
+                                <div className="bg-blue-600 p-1.5 rounded-lg text-white">
+                                    <Icon name="bar-chart-3" />
+                                </div>
+                                <span className={`text-xl font-bold ${!scrolled && activeTab === 'home' ? 'text-white' : 'text-slate-900'}`}>StatClub JNU</span>
+                            </div>
+                            <div className="hidden md:flex gap-8">
+                                {navLinks.map(link => (
+                                    <button 
+                                        key={link.id} 
+                                        onClick={() => setActiveTab(link.id)}
+                                        className={`text-sm font-bold ${activeTab === link.id ? 'text-blue-600' : (!scrolled && activeTab === 'home' ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:text-slate-900')}`}
+                                    >
+                                        {link.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                                <Icon name={isMenuOpen ? "x" : "menu"} className={!scrolled && activeTab === 'home' ? 'text-white' : 'text-slate-900'} />
+                            </button>
+                        </div>
+                        {isMenuOpen && (
+                            <div className="bg-white border-t p-4 flex flex-col gap-4 md:hidden">
+                                {navLinks.map(link => (
+                                    <button key={link.id} onClick={() => {setActiveTab(link.id); setIsMenuOpen(false);}} className="text-left font-bold py-2">{link.label}</button>
+                                ))}
+                            </div>
+                        )}
+                    </nav>
+                    <main>{renderContent()}</main>
+                    <footer className="bg-slate-900 text-slate-400 py-12 text-center">
+                        <p>© 2024 Statistics Club JNU. School of Physical Sciences.</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
